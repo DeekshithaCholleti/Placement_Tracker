@@ -1,0 +1,13 @@
+### REGISTER USER
+
+POST http://localhost:5000/api/auth/register
+Content-Type: application/json
+
+{
+  "name":"Charvy",
+  "email":"charvy@gmail.com",
+  "password":"123456",
+  "rollNumber":"22A91A05A1",
+  "branch":"CSE",
+  "cgpa":8.5
+}
