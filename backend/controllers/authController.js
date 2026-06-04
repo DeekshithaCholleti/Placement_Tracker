@@ -104,7 +104,8 @@ export const uploadResume = async (req, res) => {
 
     let resumeUrl = req.file.path;
     if (!resumeUrl.startsWith("http") && !resumeUrl.startsWith("https")) {
-      resumeUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+      const baseUrl = `${req.protocol}://${req.get("host")}`;
+      resumeUrl = `${baseUrl}/uploads/${req.file.filename}`;
     }
     user.resume = resumeUrl;
 
