@@ -27,7 +27,8 @@ const parsedOrigins = rawFrontendUrls
 const defaultOrigins = [
   "http://localhost:5173",
   "http://localhost:3000",
-  "https://placement-tracker-nine-ashen.vercel.app"
+  "https://placement-tracker-nine-ashen.vercel.app",
+  "https://placement-tracker-fm0cs3v9m.vercel.app"
 ];
 
 const allowedOrigins = [...new Set([...parsedOrigins, ...defaultOrigins])];
@@ -35,7 +36,16 @@ const allowedOrigins = [...new Set([...parsedOrigins, ...defaultOrigins])];
 app.use(cors({
   origin: (origin, callback) => {
     const normalizedOrigin = origin ? origin.trim().replace(/\/$/, "") : "";
-    if (!origin || allowedOrigins.includes(normalizedOrigin) || allowedOrigins.includes("*")) {
+    
+    // Check if origin matches Vercel deployment patterns (e.g. placement-tracker-*.vercel.app)
+    const isVercelPreview = /^https:\/\/placement-tracker-.*\.vercel\.app$/.test(normalizedOrigin);
+
+    if (
+      !origin || 
+      allowedOrigins.includes(normalizedOrigin) || 
+      allowedOrigins.includes("*") ||
+      isVercelPreview
+    ) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
