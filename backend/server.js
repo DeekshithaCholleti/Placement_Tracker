@@ -18,13 +18,24 @@ const app = express();
 
 connectDB();
 
-const allowedOrigins = process.env.FRONTEND_URL 
-  ? process.env.FRONTEND_URL.split(",") 
-  : ["http://localhost:5173", "http://localhost:3000"];
+const rawFrontendUrls = process.env.FRONTEND_URL || "";
+const parsedOrigins = rawFrontendUrls
+  .split(",")
+  .map(url => url.trim().replace(/\/$/, ""))
+  .filter(Boolean);
+
+const defaultOrigins = [
+  "http://localhost:5173",
+  "http://localhost:3000",
+  "https://placement-tracker-nine-ashen.vercel.app"
+];
+
+const allowedOrigins = [...new Set([...parsedOrigins, ...defaultOrigins])];
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes("*")) {
+    const normalizedOrigin = origin ? origin.trim().replace(/\/$/, "") : "";
+    if (!origin || allowedOrigins.includes(normalizedOrigin) || allowedOrigins.includes("*")) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
